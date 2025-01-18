@@ -121,6 +121,18 @@ class DomainConfig(BaseModel):
                 raise ValueError(f"Invalid domain name: {error}")
         super().__init__(**data)
 
+    def add_bounded_context(self, context: BoundedContextConfig) -> None:
+        """Add a bounded context to the domain."""
+        if context.name in self.bounded_contexts:
+            raise ValueError(f"Bounded context {context.name} already exists")
+        self.bounded_contexts[context.name] = context
+
+    def remove_bounded_context(self, context_name: str) -> None:
+        """Remove a bounded context from the domain."""
+        if context_name not in self.bounded_contexts:
+            raise ValueError(f"Bounded context {context_name} does not exist")
+        del self.bounded_contexts[context_name]
+
 
 class NagrajProjectConfig(BaseModel):
     """Configuration for a nagraj project."""
@@ -147,6 +159,20 @@ class NagrajProjectConfig(BaseModel):
             raise ValueError(f"Domain {domain_name} does not exist")
 
         self.domains[domain_name].bounded_contexts[context.name] = context
+        self.updated_at = datetime.now(UTC)
+
+    def remove_domain(self, domain_name: str) -> None:
+        """Remove a domain from the project configuration."""
+        if domain_name not in self.domains:
+            raise ValueError(f"Domain {domain_name} does not exist")
+        del self.domains[domain_name]
+        self.updated_at = datetime.now(UTC)
+
+    def remove_bounded_context(self, domain_name: str, context_name: str) -> None:
+        """Remove a bounded context from a domain."""
+        if domain_name not in self.domains:
+            raise ValueError(f"Domain {domain_name} does not exist")
+        self.domains[domain_name].bounded_contexts.pop(context_name)
         self.updated_at = datetime.now(UTC)
 
     def model_dump(self, *args, **kwargs) -> Dict:

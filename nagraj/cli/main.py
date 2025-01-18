@@ -1,9 +1,11 @@
+"""Main CLI entry point."""
+
 import click
 from rich.console import Console
 
-from nagraj.cli.commands.context import add_bounded_context
-from nagraj.cli.commands.domain import add_domain
+from nagraj.cli.commands.add import add
 from nagraj.cli.commands.new import new
+from nagraj.cli.commands.remove import remove
 from nagraj.cli.commands.validate import validate
 
 console = Console()
@@ -18,8 +20,8 @@ def cli():
 
 # Register commands
 cli.add_command(new)
-cli.add_command(add_domain)
-cli.add_command(add_bounded_context)
+cli.add_command(add)
+cli.add_command(remove)
 cli.add_command(validate)
 
 if __name__ == "__main__":

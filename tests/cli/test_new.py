@@ -20,6 +20,10 @@ def test_new_project_creates_structure(
             str(temp_project_dir),
             "-a",
             "Test Author",
+            "--domain",
+            "core",
+            "--context",
+            "main",
             "--debug",
         ],
     )
@@ -44,6 +48,22 @@ def test_new_project_creates_structure(
     assert (base_dir / "base_value_object.py").is_file()
     assert (base_dir / "base_aggregate_root.py").is_file()
     assert (base_dir / "base_domain_event.py").is_file()
+
+    # Check initial domain and bounded context
+    domain_dir = project_dir / "src" / "domains" / "core"
+    assert domain_dir.is_dir()
+    assert (domain_dir / "__init__.py").is_file()
+    assert (domain_dir / "base").is_dir()
+    assert (domain_dir / "base" / "__init__.py").is_file()
+
+    context_dir = domain_dir / "main"
+    assert context_dir.is_dir()
+    assert (context_dir / "domain" / "entities").is_dir()
+    assert (context_dir / "domain" / "value_objects").is_dir()
+    assert (context_dir / "application" / "commands").is_dir()
+    assert (context_dir / "application" / "queries").is_dir()
+    assert (context_dir / "interfaces" / "fastapi" / "routes").is_dir()
+    assert (context_dir / "infrastructure" / "repositories").is_dir()
 
 
 def test_new_project_with_description(
@@ -91,3 +111,40 @@ def test_new_project_fails_on_existing_directory(
     )
     assert result.exit_code != 0
     assert "already exists" in result.output.lower()
+
+
+def test_new_project_with_custom_domain_and_context(
+    cli_runner: CliRunner, temp_project_dir: Path
+) -> None:
+    """Test that 'new' command creates project with custom domain and context."""
+    result = cli_runner.invoke(
+        cli,
+        [
+            "new",
+            "test_project",
+            "-o",
+            str(temp_project_dir),
+            "--domain",
+            "orders",
+            "--context",
+            "order-management",
+            "--debug",
+        ],
+    )
+    if result.exit_code != 0:
+        print(f"Debug output: {result.output}")
+    assert result.exit_code == 0
+
+    project_dir = temp_project_dir / "test_project"
+    domain_dir = project_dir / "src" / "domains" / "orders"
+    assert domain_dir.is_dir()
+    assert (domain_dir / "__init__.py").is_file()
+
+    context_dir = domain_dir / "order-management"
+    assert context_dir.is_dir()
+    assert (context_dir / "domain" / "entities").is_dir()
+    assert (context_dir / "domain" / "value_objects").is_dir()
+    assert (context_dir / "application" / "commands").is_dir()
+    assert (context_dir / "application" / "queries").is_dir()
+    assert (context_dir / "interfaces" / "fastapi" / "routes").is_dir()
+    assert (context_dir / "infrastructure" / "repositories").is_dir()
