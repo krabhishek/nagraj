@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "{{ cookiecutter.project_description }}"
 authors = ["{{ cookiecutter.author }}"]
 readme = "README.md"
+packages = [{ include = "{{ cookiecutter.project_name }}" }]
 
 [tool.poetry.dependencies]
 python = "{{ cookiecutter.python_version }}"
