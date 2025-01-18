@@ -1,0 +1,1 @@
+"""{{ cookiecutter.domain_name }} domain package.""" 

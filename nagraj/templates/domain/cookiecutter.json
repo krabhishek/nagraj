@@ -1,0 +1,5 @@
+{
+  "domain_name": "my_domain",
+  "base_classes": {},
+  "_copy_without_render": ["*.html", "*.j2"]
+}
