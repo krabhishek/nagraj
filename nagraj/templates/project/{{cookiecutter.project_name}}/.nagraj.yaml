@@ -1,0 +1,16 @@
+version: "1.0"
+created_at: "{{ cookiecutter.created_at }}"
+updated_at: "{{ cookiecutter.updated_at }}"
+name: "{{ cookiecutter.project_name }}"
+description: "{{ cookiecutter.project_description }}"
+author: "{{ cookiecutter.author }}"
+
+# Base class configuration
+base_classes:
+  entity: "{{ cookiecutter.base_classes.entity_base | default('pydantic.BaseModel') }}"
+  aggregate_root: "{{ cookiecutter.base_classes.aggregate_root_base | default('pydantic.BaseModel') }}"
+  value_object: "{{ cookiecutter.base_classes.value_object_base | default('pydantic.BaseModel') }}"
+  orm: "{{ cookiecutter.base_classes.orm_base | default('sqlmodel.SQLModel') }}"
+
+# Domains will be added here as they are created
+domains: {}

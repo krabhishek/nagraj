@@ -1,24 +1,28 @@
 """Base aggregate root class for domain aggregates."""
 
-from typing import List
+from datetime import UTC, datetime
+from typing import Optional
+from uuid import UUID, uuid4
 
-from .base_domain_event import BaseDomainEvent
-from .base_entity import BaseEntity
+from pydantic import BaseModel, ConfigDict, Field
 
 
-class BaseAggregateRoot(BaseEntity):
-    """Base class for all aggregate roots."""
+class BaseAggregateRoot(BaseModel):
+    """Base class for all domain aggregates."""
 
-    def __init__(self, **data):
-        super().__init__(**data)
-        self._events: List[BaseDomainEvent] = []
+    model_config = ConfigDict(frozen=True)
 
-    def add_event(self, event: BaseDomainEvent) -> None:
-        """Add a domain event to the aggregate."""
-        self._events.append(event)
+    id: UUID = Field(default_factory=uuid4)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: Optional[datetime] = None
+    version: int = 1
 
-    def clear_events(self) -> List[BaseDomainEvent]:
-        """Clear and return all pending domain events."""
-        events = self._events[:]
-        self._events.clear()
-        return events
+    def __eq__(self, other: object) -> bool:
+        """Compare aggregates by their identity."""
+        if not isinstance(other, BaseAggregateRoot):
+            return NotImplemented
+        return self.id == other.id
+
+    def __hash__(self) -> int:
+        """Hash aggregate based on its identity."""
+        return hash(self.id)

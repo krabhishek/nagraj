@@ -34,11 +34,14 @@ class TemplateEngine:
         """Generate a project structure using Cookiecutter."""
         template_path = settings.template_path / template_name
 
+        # Extract the inner context if it's wrapped in a cookiecutter namespace
+        extra_context = context.get("cookiecutter", context)
+
         result = cookiecutter(
             str(template_path),
             output_dir=str(output_dir),
             no_input=no_input,
-            extra_context=context,
+            extra_context=extra_context,
         )
         return Path(result)
 

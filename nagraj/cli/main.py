@@ -4,6 +4,7 @@ from rich.console import Console
 from nagraj.cli.commands.context import add_bounded_context
 from nagraj.cli.commands.domain import add_domain
 from nagraj.cli.commands.new import new
+from nagraj.cli.commands.validate import validate
 
 console = Console()
 
@@ -19,6 +20,7 @@ def cli():
 cli.add_command(new)
 cli.add_command(add_domain)
 cli.add_command(add_bounded_context)
+cli.add_command(validate)
 
 if __name__ == "__main__":
     cli()

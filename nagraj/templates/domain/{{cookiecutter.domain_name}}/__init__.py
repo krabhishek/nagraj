@@ -1,1 +1,1 @@
-"""{{ cookiecutter.domain_name }} domain package.""" 
+"""Domain module for {{ cookiecutter.domain_name }}.""" 

@@ -71,6 +71,10 @@ class Settings(BaseSettings):
                     f"Warning: Failed to load config from {settings.config_path}: {e}"
                 )
 
+        # Ensure template path exists
+        if not settings.template_path.exists():
+            raise ValueError(f"Template path does not exist: {settings.template_path}")
+
         return settings
 
 

@@ -6,8 +6,8 @@ from .base_entity import BaseEntity
 from .base_value_object import BaseValueObject
 
 __all__ = [
-    "BaseEntity",
-    "BaseValueObject",
     "BaseAggregateRoot",
     "BaseDomainEvent",
+    "BaseEntity",
+    "BaseValueObject",
 ]
