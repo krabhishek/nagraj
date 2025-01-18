@@ -209,9 +209,14 @@ class ProjectManager:
 
             # Generate domain files
             context = context or {}
+            domain_config = DomainConfig(
+                name=domain_name
+            )  # Create temporarily to get pascal name
             context = {
                 "cookiecutter": {
                     "domain_name": domain_name,
+                    "pascal_domain_name": domain_config.pascal_case_name,
+                    "snake_domain_name": domain_name.replace("-", "_"),
                     "base_classes": settings.base_classes.model_dump(),
                     **context,
                 }

@@ -49,11 +49,77 @@ class DomainConfig(BaseModel):
     description: Optional[str] = None
     bounded_contexts: Dict[str, BoundedContextConfig] = Field(default_factory=dict)
 
+    @classmethod
+    def validate_domain_name(cls, name: str) -> tuple[bool, str]:
+        """Validate domain name format.
+
+        Args:
+            name: The domain name to validate.
+
+        Returns:
+            A tuple of (is_valid, error_message).
+        """
+        if not name:
+            return False, "Domain name cannot be empty"
+
+        # Check for invalid characters
+        if any(c for c in name if not c.isalnum() and c not in "-_"):
+            return (
+                False,
+                "Domain name can only contain letters, numbers, dashes, and underscores",
+            )
+
+        # Check for spaces
+        if " " in name:
+            return False, "Domain name cannot contain spaces"
+
+        # Check for consecutive dashes or underscores
+        if "--" in name or "__" in name:
+            return False, "Domain name cannot contain consecutive dashes or underscores"
+
+        # Check for starting/ending with dash or underscore
+        if name.startswith(("-", "_")) or name.endswith(("-", "_")):
+            return False, "Domain name cannot start or end with a dash or underscore"
+
+        # Check for plural form
+        parts = name.split("-")
+        for part in parts:
+            subparts = part.split("_")
+            for subpart in subparts:
+                if subpart.endswith("s") and not subpart.endswith(
+                    "ss"
+                ):  # Allow words like 'address'
+                    return False, "Domain name parts should be singular"
+
+        return True, ""
+
+    @property
+    def pascal_case_name(self) -> str:
+        """Convert domain name to PascalCase.
+
+        Example:
+            'order-management' -> 'OrderManagement'
+            'order_management' -> 'OrderManagement'
+        """
+        # Split by both dash and underscore
+        parts = []
+        for part in self.name.split("-"):
+            parts.extend(part.split("_"))
+        return "".join(part.capitalize() for part in parts)
+
     def model_dump(self, *args, **kwargs) -> Dict:
         """Override model_dump to handle enum serialization."""
         data = super().model_dump(*args, **kwargs)
         data["type"] = str(data["type"])
         return data
+
+    def __init__(self, **data):
+        """Initialize domain config with validation."""
+        if "name" in data:
+            is_valid, error = self.validate_domain_name(data["name"])
+            if not is_valid:
+                raise ValueError(f"Invalid domain name: {error}")
+        super().__init__(**data)
 
 
 class NagrajProjectConfig(BaseModel):

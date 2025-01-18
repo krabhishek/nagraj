@@ -28,10 +28,59 @@ def test_bounded_context_config_defaults() -> None:
 
 def test_domain_config_defaults() -> None:
     """Test DomainConfig default values."""
-    domain = DomainConfig(name="test_domain")
-    assert domain.name == "test_domain"
+    domain = DomainConfig(name="test-domain")
+    assert domain.name == "test-domain"
     assert domain.type == DomainType.CORE
     assert domain.bounded_contexts == {}
+
+
+@pytest.mark.parametrize(
+    "name,expected_valid",
+    [
+        ("order", True),
+        ("order-management", True),
+        ("customer-support", True),
+        ("address", True),  # Words ending in 'ss' are allowed
+        ("order_management", True),  # Underscores are allowed
+        ("customer_support", True),  # Underscores are allowed
+        ("orders", False),  # Plural
+        ("order management", False),  # Space
+        ("order--management", False),  # Consecutive dashes
+        ("order__management", False),  # Consecutive underscores
+        ("-order", False),  # Starting dash
+        ("order-", False),  # Ending dash
+        ("_order", False),  # Starting underscore
+        ("order_", False),  # Ending underscore
+        ("order@management", False),  # Special character
+        ("customers-support", False),  # Plural with dash
+        ("customers_support", False),  # Plural with underscore
+    ],
+)
+def test_domain_name_validation(name: str, expected_valid: bool) -> None:
+    """Test domain name validation rules."""
+    if expected_valid:
+        domain = DomainConfig(name=name)
+        assert domain.name == name
+    else:
+        with pytest.raises(ValueError, match="Invalid domain name"):
+            DomainConfig(name=name)
+
+
+@pytest.mark.parametrize(
+    "name,expected_pascal",
+    [
+        ("order", "Order"),
+        ("order-management", "OrderManagement"),
+        ("customer-support", "CustomerSupport"),
+        ("order_management", "OrderManagement"),
+        ("customer_support", "CustomerSupport"),
+        ("address", "Address"),
+    ],
+)
+def test_domain_pascal_case_name(name: str, expected_pascal: str) -> None:
+    """Test conversion of domain name to PascalCase."""
+    domain = DomainConfig(name=name)
+    assert domain.pascal_case_name == expected_pascal
 
 
 def test_project_config_validation(sample_config: NagrajProjectConfig) -> None:

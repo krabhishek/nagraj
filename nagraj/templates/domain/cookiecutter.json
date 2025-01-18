@@ -1,5 +1,6 @@
 {
-  "domain_name": "my_domain",
-  "base_classes": {},
-  "_copy_without_render": ["*.html", "*.j2"]
+  "domain_name": "",
+  "pascal_domain_name": "{{ cookiecutter.domain_name.split('-')|map('capitalize')|join('') }}",
+  "snake_domain_name": "{{ cookiecutter.domain_name.replace('-', '_') }}",
+  "_copy_without_render": ["__pycache__/*", "*.pyc"]
 }
