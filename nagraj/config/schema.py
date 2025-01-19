@@ -31,6 +31,50 @@ def setup_yaml_representers() -> None:
     yaml.add_representer(DomainType, represent_domain_type, Dumper=yaml.SafeDumper)
 
 
+def validate_entity_name(name: str) -> tuple[bool, str]:
+    """Validate entity name format.
+
+    Args:
+        name: The entity name to validate.
+
+    Returns:
+        A tuple of (is_valid, error_message).
+    """
+    if not name:
+        return False, "Entity name cannot be empty"
+
+    # Check for invalid characters
+    if any(c for c in name if not c.isalnum() and c not in "-_"):
+        return (
+            False,
+            "Entity name can only contain letters, numbers, dashes, and underscores",
+        )
+
+    # Check for spaces
+    if " " in name:
+        return False, "Entity name cannot contain spaces"
+
+    # Check for consecutive dashes or underscores
+    if "--" in name or "__" in name:
+        return False, "Entity name cannot contain consecutive dashes or underscores"
+
+    # Check for starting/ending with dash or underscore
+    if name.startswith(("-", "_")) or name.endswith(("-", "_")):
+        return False, "Entity name cannot start or end with a dash or underscore"
+
+    # Check for plural form
+    parts = name.split("-")
+    for part in parts:
+        subparts = part.split("_")
+        for subpart in subparts:
+            if subpart.endswith("s") and not subpart.endswith(
+                "ss"
+            ):  # Allow words like 'address'
+                return False, "Entity name parts should be singular"
+
+    return True, ""
+
+
 class BoundedContextConfig(BaseModel):
     """Configuration for a bounded context."""
 

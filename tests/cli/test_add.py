@@ -203,3 +203,215 @@ def test_add_bounded_context_fails_on_duplicate(
     )
     assert result.exit_code != 0
     assert "already exists" in result.output.lower()
+
+
+def test_add_entity_adds_structure(
+    cli_runner: CliRunner, sample_project_with_domain: tuple[Path, str]
+) -> None:
+    """Test that 'add entity' command creates the entity structure."""
+    project_path, _ = sample_project_with_domain
+    # Add a bounded context first
+    domain_name = "core"
+    context_name = "test-context"
+    result = cli_runner.invoke(
+        cli,
+        [
+            "add",
+            "bc",
+            domain_name,
+            context_name,
+            "--project-dir",
+            str(project_path),
+        ],
+    )
+    assert result.exit_code == 0
+
+    # Then add an entity
+    entity_name = "test-entity"
+    result = cli_runner.invoke(
+        cli,
+        [
+            "add",
+            "entity",
+            entity_name,
+            domain_name,
+            context_name,
+            "--project-dir",
+            str(project_path),
+            "--description",
+            "A test entity",
+        ],
+    )
+    assert result.exit_code == 0
+
+    # Check entity file is created
+    entity_file = (
+        project_path
+        / "src"
+        / "domains"
+        / domain_name
+        / context_name
+        / "domain"
+        / "entities"
+        / f"{entity_name.replace('-', '_')}.py"
+    )
+    assert entity_file.is_file()
+
+    # Check entity file content
+    content = entity_file.read_text()
+    assert "A test entity" in content
+    assert "class TestEntity(BaseEntity):" in content
+    assert "id: str = Field" in content
+
+
+def test_add_entity_fails_on_nonexistent_project(
+    cli_runner: CliRunner, temp_project_dir: Path
+) -> None:
+    """Test that 'add entity' command fails when project does not exist."""
+    result = cli_runner.invoke(
+        cli,
+        [
+            "add",
+            "entity",
+            "test-entity",
+            "core",
+            "main",
+            "--project-dir",
+            str(temp_project_dir / "nonexistent"),
+        ],
+    )
+    assert result.exit_code != 0
+    assert "does not exist" in result.output.lower()
+
+
+def test_add_entity_fails_on_nonexistent_domain(
+    cli_runner: CliRunner, sample_project: Path
+) -> None:
+    """Test that 'add entity' command fails when domain does not exist."""
+    result = cli_runner.invoke(
+        cli,
+        [
+            "add",
+            "entity",
+            "test-entity",
+            "nonexistent-domain",
+            "main",
+            "--project-dir",
+            str(sample_project),
+        ],
+    )
+    assert result.exit_code != 0
+    assert "domain nonexistent-domain does not exist" in result.output.lower()
+
+
+def test_add_entity_fails_on_nonexistent_context(
+    cli_runner: CliRunner, sample_project_with_domain: tuple[Path, str]
+) -> None:
+    """Test that 'add entity' command fails when bounded context does not exist."""
+    project_path, _ = sample_project_with_domain
+    result = cli_runner.invoke(
+        cli,
+        [
+            "add",
+            "entity",
+            "test-entity",
+            "core",
+            "nonexistent-context",
+            "--project-dir",
+            str(project_path),
+        ],
+    )
+    assert result.exit_code != 0
+    assert "bounded context nonexistent-context does not exist" in result.output.lower()
+
+
+def test_add_entity_fails_on_invalid_name(
+    cli_runner: CliRunner, sample_project_with_domain: tuple[Path, str]
+) -> None:
+    """Test that 'add entity' command fails when entity name is invalid."""
+    project_path, _ = sample_project_with_domain
+    # Add a bounded context first
+    domain_name = "core"
+    context_name = "test-context"
+    result = cli_runner.invoke(
+        cli,
+        [
+            "add",
+            "bc",
+            domain_name,
+            context_name,
+            "--project-dir",
+            str(project_path),
+        ],
+    )
+    assert result.exit_code == 0
+
+    # Try to add an entity with invalid name
+    result = cli_runner.invoke(
+        cli,
+        [
+            "add",
+            "entity",
+            "test--entity",  # Invalid: consecutive dashes
+            domain_name,
+            context_name,
+            "--project-dir",
+            str(project_path),
+        ],
+    )
+    assert result.exit_code != 0
+    assert "cannot contain consecutive dashes" in result.output.lower()
+
+
+def test_add_entity_fails_on_duplicate(
+    cli_runner: CliRunner, sample_project_with_domain: tuple[Path, str]
+) -> None:
+    """Test that 'add entity' command fails when entity already exists."""
+    project_path, _ = sample_project_with_domain
+    # Add a bounded context first
+    domain_name = "core"
+    context_name = "test-context"
+    result = cli_runner.invoke(
+        cli,
+        [
+            "add",
+            "bc",
+            domain_name,
+            context_name,
+            "--project-dir",
+            str(project_path),
+        ],
+    )
+    assert result.exit_code == 0
+
+    # Add an entity
+    entity_name = "test-entity"
+    result = cli_runner.invoke(
+        cli,
+        [
+            "add",
+            "entity",
+            entity_name,
+            domain_name,
+            context_name,
+            "--project-dir",
+            str(project_path),
+        ],
+    )
+    assert result.exit_code == 0
+
+    # Try to add the same entity again
+    result = cli_runner.invoke(
+        cli,
+        [
+            "add",
+            "entity",
+            entity_name,
+            domain_name,
+            context_name,
+            "--project-dir",
+            str(project_path),
+        ],
+    )
+    assert result.exit_code != 0
+    assert "already exists" in result.output.lower()

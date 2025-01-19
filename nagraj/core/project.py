@@ -309,6 +309,95 @@ class ProjectManager:
         except Exception as e:
             raise ValueError(f"Failed to add bounded context: {e}")
 
+    def add_entity(
+        self,
+        project_path: Union[str, Path],
+        domain_name: str,
+        context_name: str,
+        entity_name: str,
+        description: Optional[str] = None,
+    ) -> Path:
+        """Add a new entity to a bounded context.
+
+        Args:
+            project_path: Path to the project root directory.
+            domain_name: Name of the domain containing the bounded context.
+            context_name: Name of the bounded context to add the entity to.
+            entity_name: Name of the entity to add.
+            description: Optional description of the entity.
+
+        Returns:
+            Path to the created entity file.
+
+        Raises:
+            ValueError: If the project, domain, or bounded context does not exist.
+        """
+        try:
+            self.project_path = Path(project_path)
+            if not self.project_path.exists():
+                raise ValueError(f"Not a nagraj project: {project_path}")
+
+            # Load project configuration
+            try:
+                self.config = self._load_config(self.project_path)
+            except ValueError as e:
+                if "not a nagraj project" in str(e).lower():
+                    raise
+                raise ValueError(f"Failed to load project configuration: {e}")
+
+            # Check if domain exists
+            domain_path = self.project_path / "src" / "domains" / domain_name
+            if not domain_path.exists():
+                raise ValueError(f"Domain {domain_name} does not exist")
+
+            # Check if bounded context exists
+            context_path = domain_path / context_name
+            if not context_path.exists():
+                raise ValueError(
+                    f"Bounded context {context_name} does not exist in domain {domain_name}"
+                )
+
+            # Check if entity directory exists
+            entities_path = context_path / "domain" / "entities"
+            if not entities_path.exists():
+                raise ValueError(
+                    f"Entities directory does not exist in bounded context {context_name}"
+                )
+
+            # Check if entity already exists
+            entity_file = entities_path / f"{entity_name.replace('-', '_')}.py"
+            if entity_file.exists():
+                raise ValueError(
+                    f"Entity {entity_name} already exists in bounded context {context_name}"
+                )
+
+            # Generate entity file
+            context = {
+                "cookiecutter": {
+                    "entity_name": entity_name,
+                    "pascal_entity_name": "".join(
+                        part.capitalize()
+                        for part in entity_name.replace("-", "_").split("_")
+                    ),
+                    "description": description,
+                }
+            }
+
+            try:
+                template_engine.write_template(
+                    "entity/{{cookiecutter.entity_name}}.py",
+                    entity_file,
+                    context,
+                )
+                console.print(f"Entity file created at [bold]{entity_file}[/]")
+            except Exception as e:
+                raise ValueError(f"Failed to generate entity file: {e}")
+
+            return entity_file
+
+        except Exception as e:
+            raise ValueError(str(e))
+
 
 # Global project manager instance
 project_manager = ProjectManager()

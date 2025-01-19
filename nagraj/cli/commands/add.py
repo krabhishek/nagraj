@@ -7,7 +7,7 @@ import click
 from click.exceptions import Exit
 from rich.console import Console
 
-from nagraj.config.schema import DomainConfig, DomainType
+from nagraj.config.schema import DomainConfig, DomainType, validate_entity_name
 from nagraj.core.project import ProjectManager, project_manager
 
 console = Console()
@@ -134,6 +134,10 @@ def add_bounded_context(
             console.print(
                 f"[bold red]Error:[/] Bounded context already exists: {context_name}"
             )
+        elif "not a nagraj project" in str(e).lower():
+            console.print(f"[bold red]Error:[/] Not a nagraj project: {project_dir}")
+        elif "does not exist" in str(e).lower():
+            console.print(f"[bold red]Error:[/] {str(e)}")
         else:
             console.print(f"[bold red]Error:[/] {str(e)}")
         if debug:
@@ -150,3 +154,65 @@ def add_bounded_context(
             console.print("[red]Debug traceback:[/]")
             console.print(traceback.format_exc())
         raise Exit(code=1)
+
+
+@add.command(name="entity")
+@click.argument("name")
+@click.argument("domain_name")
+@click.argument("context_name")
+@click.option(
+    "--project-dir",
+    "-p",
+    type=click.Path(file_okay=False, path_type=Path),
+    default=Path.cwd(),
+    help="Project root directory",
+)
+@click.option("--description", "-d", help="Description of the entity")
+@click.option("--debug/--no-debug", default=False, help="Enable debug output")
+def add_entity(
+    name: str,
+    domain_name: str,
+    context_name: str,
+    project_dir: Path,
+    description: Optional[str] = None,
+    debug: bool = False,
+) -> None:
+    """Add a new entity to a bounded context."""
+    console = Console()
+
+    try:
+        # Validate entity name
+        is_valid, error_message = validate_entity_name(name)
+        if not is_valid:
+            console.print(f"[red]Error:[/red] {error_message}")
+            raise Exit(1)
+
+        # Check if project directory exists and is a nagraj project
+        if not project_dir.exists():
+            console.print(f"[red]Error:[/red] Directory {project_dir} does not exist")
+            raise Exit(1)
+
+        if not (project_dir / ".nagraj.yaml").exists():
+            console.print(
+                f"[red]Error:[/red] Directory {project_dir} is not a nagraj project"
+            )
+            raise Exit(1)
+
+        # Add entity using the global project manager instance
+        project_manager.add_entity(
+            project_dir, domain_name, context_name, name, description
+        )
+
+        console.print(
+            f"[green]Success:[/green] Entity {name} added to {domain_name}/{context_name}"
+        )
+
+    except Exit as e:
+        if debug:
+            console.print_exception()
+        raise e
+    except Exception as e:
+        if debug:
+            console.print_exception()
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise Exit(1)
