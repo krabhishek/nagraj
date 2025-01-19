@@ -11,6 +11,11 @@ from nagraj.core.project import project_manager
 
 console = Console()
 
+# Load ASCII art
+ASCII_ART = Path(__file__).parent.parent / "ascii_art.txt"
+with ASCII_ART.open() as f:
+    NAGRAJ_ART = f.read()
+
 
 @click.command()
 @click.argument("name")
@@ -34,6 +39,7 @@ console = Console()
     default="main",
 )
 @click.option("--debug/--no-debug", default=False, help="Enable debug output")
+@click.option("--no-art", is_flag=True, help="Disable ASCII art display")
 def new(
     name: str,
     output_dir: Path,
@@ -42,12 +48,20 @@ def new(
     domain: str = "core",
     context: str = "main",
     debug: bool = False,
+    no_art: bool = False,
 ) -> None:
     """Create a new DDD/CQRS project with initial domain and bounded context.
 
     NAME is the name of the project to create.
     """
     try:
+        # Display ASCII art with a cool message
+        if not no_art:
+            console.print(NAGRAJ_ART, style="green")
+            console.print(
+                "\n[bold blue]Nagraj, the Snake King, will help you create your DDD/CQRS project![/]\n"
+            )
+
         if debug:
             console.print(
                 f"Debug: Creating project with name={name}, output_dir={output_dir}, "
@@ -102,9 +116,12 @@ def new(
                 console.print(traceback.format_exc())
             raise Exit(1)
 
-        # Print success message
+        # Print success message with a fun touch
         console.print(
             f"\n[bold green]✓[/] Project created successfully at [bold]{project_dir}[/]"
+        )
+        console.print(
+            "\n[bold blue]Nagraj's power flows through your new DDD/CQRS project! 🐍[/]"
         )
 
     except ValueError as e:

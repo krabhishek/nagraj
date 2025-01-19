@@ -13,7 +13,7 @@
 
     // Hide cache and system files
     "files.exclude": {
-        "**/__pycache__": false,
+        "**/__pycache__": true,
         "**/.pytest_cache": true,
         "**/.ruff_cache": true,
         "**/.mypy_cache": true,
