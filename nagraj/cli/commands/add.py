@@ -14,7 +14,7 @@ console = Console()
 
 
 @click.group(name="add")
-def add():
+def add() -> None:
     """Add components to your project."""
     pass
 

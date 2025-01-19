@@ -13,7 +13,7 @@ console = Console()
 
 @click.group()
 @click.version_option()
-def cli():
+def cli() -> None:
     """Nagraj - A CLI tool for generating DDD/CQRS microservices applications."""
     pass
 

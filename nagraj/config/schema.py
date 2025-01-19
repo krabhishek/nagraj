@@ -3,7 +3,7 @@
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import yaml
 from pydantic import BaseModel, Field
@@ -107,13 +107,13 @@ class DomainConfig(BaseModel):
             parts.extend(part.split("_"))
         return "".join(part.capitalize() for part in parts)
 
-    def model_dump(self, *args, **kwargs) -> Dict:
+    def model_dump(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
         """Override model_dump to handle enum serialization."""
         data = super().model_dump(*args, **kwargs)
         data["type"] = str(data["type"])
         return data
 
-    def __init__(self, **data):
+    def __init__(self, **data: Any) -> None:
         """Initialize domain config with validation."""
         if "name" in data:
             is_valid, error = self.validate_domain_name(data["name"])
@@ -175,7 +175,7 @@ class NagrajProjectConfig(BaseModel):
         self.domains[domain_name].bounded_contexts.pop(context_name)
         self.updated_at = datetime.now(UTC)
 
-    def model_dump(self, *args, **kwargs) -> Dict:
+    def model_dump(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
         """Override model_dump to handle datetime serialization."""
         data = super().model_dump(*args, **kwargs)
         data["created_at"] = data["created_at"].isoformat()

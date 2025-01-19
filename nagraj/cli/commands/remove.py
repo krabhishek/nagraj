@@ -12,7 +12,7 @@ console = Console()
 
 
 @click.group(name="remove")
-def remove():
+def remove() -> None:
     """Remove components from your project."""
     pass
 

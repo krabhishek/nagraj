@@ -10,7 +10,7 @@ from nagraj.config.settings import settings
 class TemplateEngine:
     """Template engine abstraction that handles both Cookiecutter and Jinja2."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.jinja_env = Environment(
             loader=FileSystemLoader(str(settings.template_path)),
             trim_blocks=True,

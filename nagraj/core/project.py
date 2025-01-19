@@ -21,7 +21,7 @@ console = Console()
 class ProjectManager:
     """Manages project structure and modifications."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.config: Optional[NagrajProjectConfig] = None
         self.project_path: Optional[Path] = None
 
@@ -155,13 +155,13 @@ class ProjectManager:
 
             # Create __init__.py files
             init_files = [
-                "src/__init__.py",
-                "src/shared/__init__.py",
-                "src/domains/__init__.py",
+                Path("src/__init__.py"),
+                Path("src/shared/__init__.py"),
+                Path("src/domains/__init__.py"),
             ]
             try:
                 for file_path in init_files:
-                    init_path = project_path / file_path
+                    init_path = Path(project_path / file_path)
                     if not init_path.exists():
                         template_engine.write_template(
                             f"project/{{{{cookiecutter.project_name}}}}/{file_path}",
