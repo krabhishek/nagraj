@@ -44,4 +44,4 @@ jobs:
       - name: Run linters
         run: |
           poetry run ruff check .
-          poetry run mypy nagraj/
+          poetry run mypy --config-file mypy.ini nagraj/
