@@ -1,5 +1,11 @@
 # Nagraj - Python DDD/CQRS Project Generator
 
+[![Tests](https://github.com/krabhishek/nagraj/actions/workflows/test.yml/badge.svg)](https://github.com/krabhishek/nagraj/actions/workflows/test.yml)
+[![PyPI version](https://badge.fury.io/py/nagraj.svg)](https://badge.fury.io/py/nagraj)
+[![codecov](https://codecov.io/gh/krabhishek/nagraj/branch/main/graph/badge.svg)](https://codecov.io/gh/krabhishek/nagraj)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python Version](https://img.shields.io/pypi/pyversions/nagraj.svg)](https://pypi.org/project/nagraj/)
+
 Nagraj is a command-line tool that helps you create Python projects following Domain-Driven Design (DDD) and Command Query Responsibility Segregation (CQRS) patterns. Named after the famous Indian comic book superhero, Nagraj (the Snake King), this tool aims to make DDD project setup as powerful and elegant as its namesake.
 
 ## Installation
