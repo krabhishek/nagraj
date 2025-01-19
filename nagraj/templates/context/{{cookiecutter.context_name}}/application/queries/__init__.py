@@ -1,1 +1,1 @@
-"""Query handlers for {{ cookiecutter.context_name }} bounded context.""" 
+"""Application queries for {{ cookiecutter.context_name }} bounded context."""

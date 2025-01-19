@@ -94,15 +94,22 @@ class ProjectManager:
 
             # Prepare template context
             context = {
-                "project_name": name,
-                "project_description": description
-                or f"A DDD/CQRS project named {name}",
-                "author": author or "Unknown",
-                "python_version": config.python_version,
-                "dependencies": config.dependencies,
-                "base_classes": settings.base_classes.model_dump(),
-                "created_at": now,
-                "updated_at": now,
+                "cookiecutter": {
+                    "project_name": name,
+                    "project_description": description
+                    or f"A DDD/CQRS project named {name}",
+                    "author": author or "Unknown",
+                    "python_version": config.python_version,
+                    "dependencies": config.dependencies,
+                    "base_classes": {
+                        "entity_base": settings.base_classes.entity_base,
+                        "aggregate_root_base": settings.base_classes.aggregate_root_base,
+                        "value_object_base": settings.base_classes.value_object_base,
+                        "orm_base": settings.base_classes.orm_base,
+                    },
+                    "created_at": now,
+                    "updated_at": now,
+                }
             }
 
             # Create project from template
@@ -138,7 +145,9 @@ class ProjectManager:
                         template_engine.write_template(
                             f"project/{{{{cookiecutter.project_name}}}}/src/shared/base/{file_name}",
                             file_path,
-                            context,  # Pass the context directly
+                            {
+                                "cookiecutter": context["cookiecutter"]
+                            },  # Pass the cookiecutter context
                         )
                 console.print("Base class files created")
             except Exception as e:
@@ -157,7 +166,9 @@ class ProjectManager:
                         template_engine.write_template(
                             f"project/{{{{cookiecutter.project_name}}}}/{file_path}",
                             init_path,
-                            context,  # Pass the context directly
+                            {
+                                "cookiecutter": context["cookiecutter"]
+                            },  # Pass the cookiecutter context
                         )
                 console.print("Init files created")
             except Exception as e:
@@ -276,13 +287,14 @@ class ProjectManager:
 
             # Generate bounded context files
             context = context or {}
-            context.update(
-                {
+            context = {
+                "cookiecutter": {
                     "domain_name": domain_name,
                     "context_name": context_name,
                     "base_classes": settings.base_classes.model_dump(),
+                    **context,
                 }
-            )
+            }
 
             console.print(
                 f"Adding bounded context [bold blue]{context_name}[/] to domain [bold blue]{domain_name}[/]..."

@@ -1,1 +1,1 @@
-"""Command handlers for {{ cookiecutter.context_name }} bounded context.""" 
+"""Application commands for {{ cookiecutter.context_name }} bounded context."""

@@ -1,1 +1,1 @@
-"""Domain entities for {{ cookiecutter.context_name }} bounded context.""" 
+"""Domain entities for {{ cookiecutter.context_name }} bounded context."""

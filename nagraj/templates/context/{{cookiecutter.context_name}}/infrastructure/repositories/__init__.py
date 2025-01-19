@@ -1,1 +1,1 @@
-"""Repository implementations for {{ cookiecutter.context_name }} bounded context.""" 
+"""Infrastructure repositories for {{ cookiecutter.context_name }} bounded context."""

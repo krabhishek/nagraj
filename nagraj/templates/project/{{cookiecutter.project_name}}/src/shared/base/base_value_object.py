@@ -1,12 +1,13 @@
 """Base value object class for domain value objects."""
 
-from pydantic import BaseModel, ConfigDict
+{% set base_class = cookiecutter.base_classes.value_object_base.split('.') %}
+{% if base_class|length > 1 %}
+from {{ '.'.join(base_class[:-1]) }} import {{ base_class[-1] }}
+{% endif %}
 
 
-class BaseValueObject(BaseModel):
+class BaseValueObject({{ base_class[-1] }}):
     """Base class for all domain value objects."""
-
-    model_config = ConfigDict(frozen=True)
 
     def __eq__(self, other: object) -> bool:
         """Compare value objects by their values."""

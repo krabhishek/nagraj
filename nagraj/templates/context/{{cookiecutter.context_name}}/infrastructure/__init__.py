@@ -1,1 +1,1 @@
-"""Infrastructure layer for {{ cookiecutter.context_name }} bounded context.""" 
+"""Infrastructure layer for {{ cookiecutter.context_name }} bounded context."""

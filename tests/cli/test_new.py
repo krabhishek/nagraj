@@ -125,7 +125,7 @@ def test_new_project_with_custom_domain_and_context(
             "-o",
             str(temp_project_dir),
             "--domain",
-            "orders",
+            "order",
             "--context",
             "order-management",
             "--debug",
@@ -136,7 +136,7 @@ def test_new_project_with_custom_domain_and_context(
     assert result.exit_code == 0
 
     project_dir = temp_project_dir / "test_project"
-    domain_dir = project_dir / "src" / "domains" / "orders"
+    domain_dir = project_dir / "src" / "domains" / "order"
     assert domain_dir.is_dir()
     assert (domain_dir / "__init__.py").is_file()
 

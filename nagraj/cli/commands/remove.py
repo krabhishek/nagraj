@@ -22,7 +22,7 @@ def remove():
 @click.option(
     "--project-dir",
     "-p",
-    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    type=click.Path(file_okay=False, path_type=Path),
     default=Path.cwd(),
     help="Project root directory",
 )
@@ -37,6 +37,11 @@ def remove_domain(name: str, project_dir: Path, debug: bool = False) -> None:
             console.print(
                 f"Debug: Removing domain {name} from project at {project_dir}"
             )
+
+        # Check if project directory exists
+        if not project_dir.exists():
+            console.print(f"[red]Error:[/red] Directory {project_dir} does not exist")
+            raise Exit(1)
 
         # Load project configuration
         try:
@@ -83,7 +88,7 @@ def remove_domain(name: str, project_dir: Path, debug: bool = False) -> None:
 @click.option(
     "--project-dir",
     "-p",
-    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    type=click.Path(file_okay=False, path_type=Path),
     default=Path.cwd(),
     help="Project root directory",
 )
@@ -102,6 +107,11 @@ def remove_bounded_context(
                 f"Debug: Removing bounded context {context_name} from domain {domain_name} "
                 f"in project at {project_dir}"
             )
+
+        # Check if project directory exists
+        if not project_dir.exists():
+            console.print(f"[red]Error:[/red] Directory {project_dir} does not exist")
+            raise Exit(1)
 
         # Load project configuration
         try:

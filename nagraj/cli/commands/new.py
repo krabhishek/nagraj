@@ -54,18 +54,25 @@ def new(
                 f"description={description}, author={author}, domain={domain}, context={context}"
             )
 
+        # Create project directory
+        project_dir = output_dir / name
+        if project_dir.exists():
+            console.print(f"[bold red]Error:[/] Directory {project_dir} already exists")
+            raise Exit(1)
+
         # Create project
-        project_path = project_manager.create_project(
+        project_manager.create_project(
             name=name,
             output_dir=output_dir,
             description=description,
             author=author,
         )
+        console.print("[green]✓[/green] Project structure created")
 
         # Add initial domain
         try:
             domain_path = project_manager.add_domain(
-                project_path,
+                project_dir,
                 domain,
                 {
                     "description": f"Initial domain for {name} project",
@@ -78,7 +85,7 @@ def new(
 
             # Add initial bounded context
             context_path = project_manager.add_bounded_context(
-                project_path, domain, context
+                project_dir, domain, context
             )
             console.print(
                 f"[green]✓[/green] Added initial bounded context '{context}' at {context_path}"
@@ -88,11 +95,16 @@ def new(
             console.print(
                 f"[red]Error:[/red] Failed to create initial structure: {str(e)}"
             )
+            if debug:
+                import traceback
+
+                console.print("\nDebug traceback:")
+                console.print(traceback.format_exc())
             raise Exit(1)
 
         # Print success message
         console.print(
-            f"\n[bold green]✓[/] Project created successfully at [bold]{project_path}[/]"
+            f"\n[bold green]✓[/] Project created successfully at [bold]{project_dir}[/]"
         )
 
     except ValueError as e:
@@ -100,14 +112,6 @@ def new(
         if debug:
             import traceback
 
-            console.print("[red]Debug traceback:[/]")
+            console.print("\nDebug traceback:")
             console.print(traceback.format_exc())
-        raise Exit(code=1)
-    except Exception as e:
-        console.print(f"[bold red]Error:[/] An unexpected error occurred: {str(e)}")
-        if debug:
-            import traceback
-
-            console.print("[red]Debug traceback:[/]")
-            console.print(traceback.format_exc())
-        raise Exit(code=1)
+        raise Exit(1)
