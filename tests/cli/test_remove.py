@@ -55,10 +55,9 @@ def test_remove_domain_fails_on_nonexistent_project(
         ],
     )
     assert result.exit_code != 0
-    assert (
-        "directory" in result.output.lower()
-        and "does not exist" in result.output.lower()
-    )
+    # Replace newlines with spaces to make the test more robust
+    output = result.output.lower().replace("\n", " ")
+    assert "directory" in output and "does not exist" in output
 
 
 def test_remove_domain_fails_on_nonexistent_domain(

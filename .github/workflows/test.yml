@@ -27,7 +27,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          poetry run pytest tests/ --cov=nagraj --cov-report=xml
+          poetry run pytest tests/ --cov=nagraj --cov-report=xml --cov-config=.coveragerc
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
