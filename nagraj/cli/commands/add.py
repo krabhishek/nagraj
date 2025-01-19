@@ -76,10 +76,10 @@ def add_domain(
         try:
             domain_path = project.add_domain(
                 project_dir,
-                name,
+                domain_config.name,
                 {
-                    "description": description,
-                    "type": type,
+                    "description": domain_config.description,
+                    "type": domain_config.type.value,
                 },
             )
             console.print(
