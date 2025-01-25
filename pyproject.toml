@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nagraj"
-version = "0.1.0"
+version = "0.1.1"
 description = "A CLI tool for generating DDD/CQRS microservices applications"
 authors = ["Abhishek Pathak <writetokumar@gmail.com>"]
 license = "MIT"
