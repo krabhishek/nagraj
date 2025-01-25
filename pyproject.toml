@@ -46,6 +46,17 @@ nagraj = "nagraj.cli.main:cli"
 [tool.ruff]
 exclude = ["**/nagraj/templates"]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = """
+    --cov=nagraj
+    --cov-report=xml
+    --cov-config=.coveragerc
+    --ignore=nagraj/templates/**/*
+    -v
+"""
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api" 
