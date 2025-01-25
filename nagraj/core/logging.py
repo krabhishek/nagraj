@@ -47,7 +47,7 @@ class LoggerService:
         # Configure default extra fields
         logger.configure(extra={"app_name": "{{ cookiecutter.project_slug }}"})
 
-    def get_logger(self, context: Dict[str, Any] | None = None):
+    def get_logger(self, context: Dict[str, Any] | None = None): # type: ignore[no-untyped-def]
         """
         Get a contextualized logger instance.
 
@@ -61,7 +61,7 @@ class LoggerService:
             return logger.bind(**context)
         return logger
 
-    def get_contextualized_logger(self, **kwargs: Any):
+    def get_contextualized_logger(self, **kwargs: Any): # type: ignore[no-untyped-def]
         """
         Get a logger with context variables bound to it.
 
