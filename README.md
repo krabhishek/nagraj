@@ -137,4 +137,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Credits
 
-Created and maintained by [{{ cookiecutter.author_name }}](mailto:{{ cookiecutter.author_email }}).
+Created and maintained by Abhishek Pathak (@krabhishek)
