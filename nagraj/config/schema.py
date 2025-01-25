@@ -75,6 +75,44 @@ def validate_entity_name(name: str) -> tuple[bool, str]:
     return True, ""
 
 
+def validate_event_name(name: str) -> tuple[bool, str]:
+    """Validate event name format.
+
+    Args:
+        name: The event name to validate.
+
+    Rules:
+    - Must be in kebab-case (e.g., order-created, payment-failed)
+    - Must be in past tense (e.g., created, updated, failed)
+    - Cannot contain spaces or consecutive dashes
+    - Cannot start or end with a dash
+
+    Returns:
+        A tuple of (is_valid, error_message).
+    """
+    if not name:
+        return False, "Event name cannot be empty"
+
+    if " " in name:
+        return False, "Event name cannot contain spaces"
+
+    if "--" in name:
+        return False, "Event name cannot contain consecutive dashes"
+
+    if name.startswith("-") or name.endswith("-"):
+        return False, "Event name cannot start or end with a dash"
+
+    # Check for valid characters (letters, numbers, single dashes)
+    if not all(c.isalnum() or c == "-" for c in name):
+        return False, "Event name can only contain letters, numbers, and dashes"
+
+    # Verify past tense (this is a simple check, you might want to enhance it)
+    if not any(name.endswith(suffix) for suffix in ["ed", "en", "t"]):
+        return False, "Event name must be in past tense (e.g., created, written, sent)"
+
+    return True, ""
+
+
 class BoundedContextConfig(BaseModel):
     """Configuration for a bounded context."""
 

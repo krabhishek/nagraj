@@ -3,10 +3,7 @@
 import click
 from rich.console import Console
 
-from nagraj.cli.commands.add import add
-from nagraj.cli.commands.new import new
-from nagraj.cli.commands.remove import remove
-from nagraj.cli.commands.validate import validate
+from nagraj.cli.commands import init
 
 console = Console()
 
@@ -19,10 +16,8 @@ def cli() -> None:
 
 
 # Register commands
-cli.add_command(new)
-cli.add_command(add)
-cli.add_command(remove)
-cli.add_command(validate)
+cli.add_command(init)
+
 
 if __name__ == "__main__":
     cli()

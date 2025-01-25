@@ -1,0 +1,3 @@
+"""
+Auth Domain Value Objects
+"""

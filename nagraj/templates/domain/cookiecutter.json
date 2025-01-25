@@ -1,6 +1,0 @@
-{
-  "domain_name": "",
-  "pascal_domain_name": "{{ cookiecutter.domain_name.split('-')|map('capitalize')|join('') }}",
-  "snake_domain_name": "{{ cookiecutter.domain_name.replace('-', '_') }}",
-  "_copy_without_render": ["__pycache__/*", "*.pyc"]
-}

@@ -1,0 +1,17 @@
+{
+  "project_name": "my_app",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
+  "author_name": "Noname",
+  "author_email": "noemail@example.com",
+  "project_description": "A Python project generated using nagraj",
+  "python_version": "^3.12",
+  "version": "0.1.0",
+  "created_at": "{% now 'utc', '%Y-%m-%d %H:%M:%S UTC' %}",
+  "updated_at": "{% now 'utc', '%Y-%m-%d %H:%M:%S UTC' %}",
+  "base_classes": {
+    "entity_base": "pydantic.BaseModel",
+    "aggregate_root_base": "pydantic.BaseModel",
+    "value_object_base": "pydantic.BaseModel",
+    "orm_base": "sqlmodel.SQLModel"
+  }
+}

@@ -1,0 +1,151 @@
+# Nagraj Project Configuration
+version: "1.0"
+created_at: "{{ cookiecutter.created_at }}"
+updated_at: "{{ cookiecutter.updated_at }}"
+
+# Project Information
+project:
+  name: "{{ cookiecutter.project_name }}"
+  description: "{{ cookiecutter.project_description }}"
+  version: "{{ cookiecutter.version }}"
+  author: "{{ cookiecutter.author_name }}"
+  email: "{{ cookiecutter.author_email }}"
+  python_version: "{{ cookiecutter.python_version }}"
+
+# Base Classes Configuration
+base_classes:
+  entity: "{{ cookiecutter.base_classes.entity_base }}"
+  aggregate_root: "{{ cookiecutter.base_classes.aggregate_root_base }}"
+  value_object: "{{ cookiecutter.base_classes.value_object_base }}"
+  orm: "{{ cookiecutter.base_classes.orm_base }}"
+  domain_event: "common/base/domain_event.py"
+  domain_service: "common/base/domain_service.py"
+  event_handler: "common/base/event_handler.py"
+  event_store: "common/base/event_store.py"
+  facade: "common/base/facade.py"
+  repository: "common/base/repository.py"
+  specification: "common/base/specification.py"
+
+# Infrastructure Configuration
+infrastructure:
+  database:
+    type: "postgresql"
+    migrations:
+      tool: "alembic"
+      directory: "migrations"
+  api:
+    type: "fastapi"
+    version: "0.115.6"
+    openapi_version: "3.0.2"
+  authentication:
+    type: "jwt"
+    provider: "python-jose"
+
+# Common Components
+common:
+  logging:
+    provider: "loguru"
+    config_path: "common/core/logging/logger.py"
+  settings:
+    provider: "pydantic-settings"
+    config_path: "common/core/config/settings.py"
+  exceptions:
+    base_path: "common/core/exceptions"
+  interfaces:
+    base_path: "common/core/interfaces"
+  bounded_contexts:
+    auth:
+      path: "common/bounded_contexts/auth"
+      layers:
+        domain:
+          entities:
+            - "user"
+            - "role"
+            - "permission"
+          value_objects:
+            - "email"
+            - "password"
+          aggregates:
+            - "user_aggregate"
+          repositories:
+            - "user_repository"
+          services:
+            - "authentication_service"
+            - "authorization_service"
+        application:
+          services:
+            - "user_service"
+            - "auth_service"
+          commands:
+            - "register_user"
+            - "login_user"
+            - "change_password"
+          queries:
+            - "get_user"
+            - "get_user_by_email"
+        infrastructure:
+          repositories:
+            - "sqlalchemy_user_repository"
+          services:
+            - "jwt_service"
+            - "password_service"
+        interfaces:
+          rest:
+            endpoints:
+              - "auth"
+              - "users"
+            path: "interfaces/rest_api"
+
+# Domain Configuration
+domains:
+  example_domain_one:
+    bounded_contexts:
+      example_context_one:
+        aggregates: []
+        entities: []
+        value_objects: []
+        repositories: []
+        services: []
+      example_context_two:
+        aggregates: []
+        entities: []
+        value_objects: []
+        repositories: []
+        services: []
+    interfaces:
+      rest_api:
+        type: "fastapi"
+        path: "interface/rest_api"
+        endpoints:
+          - "auth"
+          - "users"
+    context_maps:
+      path: "context_maps"
+      maps: []
+
+# Testing Configuration
+testing:
+  unit_tests:
+    tool: "pytest"
+    path: "tests/unit"
+  integration_tests:
+    tool: "pytest"
+    path: "tests/integration"
+  api_tests:
+    tool: "hurl"
+    path: "tests/apis"
+  coverage:
+    tool: "pytest-cov"
+    minimum_coverage: 80
+
+# Development Tools
+development:
+  linting:
+    - tool: "ruff"
+      config_path: "pyproject.toml"
+  formatting:
+    - tool: "ruff"
+      config_path: "pyproject.toml"
+  dependency_management:
+    tool: "poetry"
+    config_path: "pyproject.toml"

@@ -1,1 +1,0 @@
-"""Bounded context {{ cookiecutter.context_name }} in domain {{ cookiecutter.domain_name }}.""" 

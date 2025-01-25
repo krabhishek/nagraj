@@ -24,11 +24,23 @@ class ProjectConfig(BaseModel):
     python_version: str = "^3.12"
     dependencies: Dict[str, str] = Field(
         default_factory=lambda: {
-            "fastapi": "^0.109.0",
-            "sqlmodel": "^0.0.14",
+            "fastapi": "^0.115.6",
+            "sqlmodel": "^0.0.22",
             "pydantic": "^2.10.5",
-            "alembic": "^1.13.1",
-            "pytest": "^7.3.1",
+            "pydantic-settings": "^2.7.1",
+            "alembic": "^1.14.1",
+            "argon2-cffi": "^23.1.0",
+            "uvicorn": "^0.34.0",
+            "python-multipart": "^0.0.20",
+            "python-jose": "^3.3.0",
+        }
+    )
+    dev_dependencies: Dict[str, str] = Field(
+        default_factory=lambda: {
+            "pytest": "^8.3.4",
+            "pytest-cov": "^6.0.0",
+            "pytest-asyncio": "^0.25.2",
+            "ruff": "^0.9.2",
         }
     )
 

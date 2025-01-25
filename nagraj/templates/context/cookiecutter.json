@@ -1,6 +1,0 @@
-{
-  "domain_name": "my_domain",
-  "context_name": "my_context",
-  "base_classes": {},
-  "_copy_without_render": ["*.html", "*.j2"]
-}
